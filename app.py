@@ -10,7 +10,7 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain_community.document_loaders import YoutubeLoader
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.schema import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings  # Updated import
 
