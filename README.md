@@ -94,9 +94,6 @@ Have a fun idea or want to improve the app? Feel free to fork the repo and send 
 
 This project is licensed under the MIT License.
 
-## Fun Fact 🎉
-
-Did you know the app uses the **LLama-3.3-70b-specdec** model for generating text? It’s like having a digital wizard help you with your content. ⚡
 
 ---
 
