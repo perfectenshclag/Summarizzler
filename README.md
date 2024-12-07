@@ -1,12 +1,13 @@
 
 # Summarizzler: The Final Boss 🦜
 
-Welcome to **Summarizzler: The Final Boss** – a fun and dynamic app that helps you summarize or query content from URLs. Whether you're looking to quickly summarize an article or dive deep into its contents by asking specific questions, Summarizzler is your trusty companion for all things web content!
+Welcome to **Summarizzler: The Final Boss** – a fun and dynamic app that helps you summarize or query content from URLs. Whether you're looking to quickly summarize an article, dive deep into YouTube video transcripts, or ask specific questions about the content, Summarizzler is your trusty companion for all things web content!
 
 ## Features
 
 - **Summarize Content:** Instantly generate a concise summary of any URL's content.
 - **Query Extracted Text:** Ask specific questions about the extracted text and get relevant answers, powered by AI!
+- **YouTube Video Transcript:** Extract and summarize the transcript from any YouTube video or ask questions based on the video content.
 
 ## Getting Started 🚀
 
@@ -57,6 +58,7 @@ HF_TOKEN=your_huggingface_token
 ### 2. **Choose Your Operation:**
    - **Summarize Content:** The app will extract the content and generate a short summary.
    - **Query Extracted Text:** Ask the app a question about the content, and it will give you the best answer it can find!
+   - **YouTube Video Transcript:** The app can extract and summarize the transcript from YouTube videos or answer questions based on the video content.
 
 ### 3. **Under the Hood:**
    The app uses the mighty **ChatGroq** for language modeling, **FAISS** for fast similarity search, and **HuggingFace embeddings** to understand the content better. It can also pull in content from YouTube videos!
@@ -77,6 +79,12 @@ HF_TOKEN=your_huggingface_token
 - Enter the URL of any content.
 - Choose **Query Extracted Text**.
 - Ask a question, and let Summarizzler fetch the relevant info for you!
+
+### Summarize or query YouTube videos:
+
+- Enter the URL of a YouTube video.
+- Choose **Summarize Content** or **Query Extracted Text**.
+- Summarize the entire video transcript or ask questions based on it!
 
 ## Contributing
 
