@@ -1,6 +1,7 @@
 langchain
 python-dotenv
 langchain-community
+langchain-groq
 bs4
 sentence_transformers
 langchain_huggingface
