@@ -3,6 +3,24 @@
 
 Welcome to **Summarizzler: The Final Boss** – a fun and dynamic app that helps you summarize or query content from URLs. Whether you're looking to quickly summarize an article, dive deep into YouTube video transcripts, or ask specific questions about the content, Summarizzler is your trusty companion for all things web content!
 
+## Technologies & Components 🛠️
+
+| **Technology/Component**     | **Model/Component Name**         |
+|------------------------------|----------------------------------|
+| **Web Scraping**              | BeautifulSoup, Requests          |
+| **Language Model (LLM)**      | ChatGroq (Llama-3.3-70b-specdec) |
+| **Summarization**             | LangChain Summarization Chain   |
+| **Embeddings**                | HuggingFace Embeddings           |
+| **Vector Database**           | FAISS                            |
+| **Video Transcript Extraction**| YoutubeLoader (LangChain)       |
+| **Text Splitting**            | RecursiveCharacterTextSplitter  |
+| **Search**                    | FAISS (Vector-based search)     |
+| **Web Framework**             | Streamlit                        |
+| **Environment Variables**     | dotenv                          |
+
+## Live App Link 🌐
+Check out the live version of the app [here](https://summarizzler.streamlit.app).
+
 ## Features
 
 - **Summarize Content:** Instantly generate a concise summary of any URL's content.
@@ -15,7 +33,7 @@ Welcome to **Summarizzler: The Final Boss** – a fun and dynamic app that helps
 
 Before you can start using **Summarizzler: The Final Boss**, you need to make sure you have the following installed:
 
-- Python 3.x
+- Python 3.12
 - Streamlit
 - LangChain
 - HuggingFace Transformers
