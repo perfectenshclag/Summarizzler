@@ -8,11 +8,12 @@ from langchain.prompts import PromptTemplate
 from langchain_groq import ChatGroq
 from langchain.chains.summarize import load_summarize_chain
 from langchain_community.document_loaders import YoutubeLoader
+from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain.schema import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings  # Updated import
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 # Load environment variables
 load_dotenv()
@@ -23,9 +24,9 @@ os.environ["HF_TOKEN"] = os.getenv("HF_TOKEN")
 llm = ChatGroq(model="llama-3.3-70b-specdec")
 
 # Streamlit App Configuration
-st.set_page_config(page_title="Summarizzler: The Final Boss!", page_icon="🦜")
-st.title("🦜 Summarizzler: The Final Boss")
-st.subheader("Summarize or Query URL Content 🧙🏻")
+st.set_page_config(page_title="Summarizzler: The Final Boss!", page_icon="")
+st.title(" Summarizzler: The Final Boss")
+st.subheader("Summarize or Query URL Content ")
 
 # User Inputs
 generic_url = st.text_input("Enter URL", label_visibility="visible")
@@ -66,6 +67,31 @@ def extract_website_content(url):
         st.exception(e)
         return ""
 
+def fetch_youtube_transcript(video_url):
+    """Fetches a YouTube transcript in English or suggests alternatives."""
+    try:
+        if "youtube.com" in video_url:
+            video_id = video_url.split("v=")[-1].split("&")[0]
+        elif "youtu.be" in video_url:
+            video_id = video_url.split("youtu.be/")[-1].split("?")[0]
+        else:
+            raise ValueError("Invalid YouTube URL format.")
+
+        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+        try:
+            transcript = transcript_list.find_transcript(["en"]).fetch()
+            return " ".join([item["text"] for item in transcript])
+        except NoTranscriptFound:
+            st.warning("No English transcript found. Available languages:")
+            available_languages = [lang.language for lang in transcript_list]
+            st.write(", ".join(available_languages))
+        except TranscriptsDisabled:
+            st.error("Transcripts are disabled for this video.")
+    except Exception as e:
+        st.error("Error fetching YouTube transcript.")
+        st.exception(e)
+    return None
+
 def create_vector_db(docs):
     """Creates a FAISS vector database from a list of documents."""
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -73,6 +99,7 @@ def create_vector_db(docs):
     split_docs = text_splitter.split_documents(docs)
     vector_db = FAISS.from_documents(split_docs, embeddings)
     return vector_db
+
 # Main Workflow
 if st.button("Process URL"):
     if not validators.url(generic_url):
@@ -82,25 +109,17 @@ if st.button("Process URL"):
             with st.spinner("Processing..."):
                 progress_bar = st.progress(0)  # Initialize progress bar
                 status_placeholder = st.empty()  # Placeholder for status updates
-                
+
                 # Step 1: URL content extraction
                 progress_bar.progress(20)
                 status_placeholder.markdown("**Step 1/4: Extracting website content...**")
-                
-                if "youtube.com" in generic_url:
-                    try:
-                        loader = YoutubeLoader.from_youtube_url(generic_url, add_video_info=False, language="English")
-                        docs = loader.load()
-                    except Exception as yt_error:
-                        st.error("Failed to load YouTube video details. Please try another URL.")
-                        st.exception(yt_error)
-                        docs = []
+
+                if "youtube.com" in generic_url or "youtu.be" in generic_url:
+                    extracted_text = fetch_youtube_transcript(generic_url)
+                    docs = [Document(page_content=extracted_text)] if extracted_text else []
                 else:
                     extracted_text = extract_website_content(generic_url)
-                    if extracted_text:
-                        docs = [Document(page_content=extracted_text)]
-                    else:
-                        docs = []
+                    docs = [Document(page_content=extracted_text)] if extracted_text else []
 
                 if not docs:
                     st.warning("No content available for processing.")
@@ -108,27 +127,27 @@ if st.button("Process URL"):
 
                 progress_bar.progress(40)
                 status_placeholder.markdown("**Step 2/4: Creating vector database...**")
-                
+
                 # Step 2: Create vector database
                 vector_db = create_vector_db(docs)
 
                 progress_bar.progress(70)
                 if operation == "Summarize Content":
                     status_placeholder.markdown("**Step 3/4: Summarizing content...**")
-                    
+
                     # Summarize content
                     chain = load_summarize_chain(llm, chain_type="stuff", prompt=summary_prompt)
                     output_summary = chain({"input_documents": docs})
-                    
+
                     progress_bar.progress(100)
                     status_placeholder.markdown("**Done! Summary generated.**")
-                    
+
                     st.success("Summary:")
                     st.write(output_summary["output_text"])
 
                 elif operation == "Query Extracted Text" and query:
                     status_placeholder.markdown("**Step 3/4: Querying extracted text...**")
-                    
+
                     # Query content
                     retriever = vector_db.as_retriever()
                     retrieved_docs = retriever.get_relevant_documents(query)
@@ -139,17 +158,17 @@ if st.button("Process URL"):
 
                     progress_bar.progress(90)
                     status_placeholder.markdown("**Step 4/4: Generating query result...**")
-                    
+
                     # Combine retrieved content into a single context
                     combined_context = "\n".join(doc.page_content for doc in retrieved_docs)
 
                     # Use the custom query prompt
                     query_input = query_prompt.format(query=query, context=combined_context)
                     result = llm.predict(query_input)
-                    
+
                     progress_bar.progress(100)
                     status_placeholder.markdown("**Done! Query result generated.**")
-                    
+
                     st.success("Query Result:")
                     st.write(result)
         except Exception as e:
