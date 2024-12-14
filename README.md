@@ -2,7 +2,8 @@
 # Summarizzler: The Final Boss 🦜
 
 Welcome to **Summarizzler: The Final Boss** – a fun and dynamic app that helps you summarize or query content from URLs. Whether you're looking to quickly summarize an article, dive deep into YouTube video transcripts, or ask specific questions about the content, Summarizzler is your trusty companion for all things web content!
-![Alt Text](https://postimg.cc/zVzyf3VX)
+
+![Alt Text](https://i.postimg.cc/BQDHMK3D/temp-Image-KIAY8k.avif)
 
 ## Technologies & Components 🛠️
 
